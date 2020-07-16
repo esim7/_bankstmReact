@@ -40,7 +40,9 @@ namespace bankstm.Controllers
             var userId = HttpContext.User.Claims.ElementAt(5).Value;
             //var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
 
-            return await _context.BankAccounts.Include(c=>c.BankCards).Where(u=>u.User.Id == userId).ToListAsync();
+            return await _context.BankAccounts.Include(c=>c.BankCards).
+                Include(u=>u.User).
+                Where(u=>u.User.Id == userId).ToListAsync();
         }
 
         // GET: api/BankAccounts/5
