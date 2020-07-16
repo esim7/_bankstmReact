@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using bankstm.Data;
 using bankstm.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -19,16 +23,24 @@ namespace bankstm.Controllers
     {
 
         private readonly ApplicationDbContext _context;
-        public BankAccountsController(ApplicationDbContext context)
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ILogger<BankAccountsController> _logger;
+
+        public BankAccountsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, ILogger<BankAccountsController> logger)
         {
             _context = context;
+            _userManager = userManager;
+            _logger = logger;
         }
 
         // GET: api/BankAccounts
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BankAccount>>> GetBankAccounts()
         {
-            return await _context.BankAccounts.ToListAsync();
+            var userId = HttpContext.User.Claims.ElementAt(5).Value;
+            //var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+
+            return await _context.BankAccounts.Include(c=>c.BankCards).Where(u=>u.User.Id == userId).ToListAsync();
         }
 
         // GET: api/BankAccounts/5
@@ -76,10 +88,16 @@ namespace bankstm.Controllers
         [HttpPost]
         public async Task<ActionResult<BankAccount>> PostBankAccount(BankAccount bankAccount)
         {
-            _context.BankAccounts.Add(bankAccount);
+            var userId = HttpContext.User.Claims.ElementAt(5).Value;
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+
+            bankAccount.User = user;
+
+            var createdAccount = _context.BankAccounts.Add(bankAccount);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetBankAccount", new { id = bankAccount.Id }, bankAccount);
+            //return CreatedAtAction("GetBankAccount", new { id = bankAccount.Id }, bankAccount);
+            return createdAccount.Entity;
         }
 
         // DELETE: api/BankAccounts/5
@@ -100,5 +118,6 @@ namespace bankstm.Controllers
         {
             return _context.BankAccounts.Any(e => e.Id == id);
         }
+
     }
 }
