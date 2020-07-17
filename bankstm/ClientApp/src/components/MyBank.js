@@ -1,6 +1,7 @@
 ﻿import React, { Component } from 'react';
 import authService from './api-authorization/AuthorizeService';
 import { Link } from 'react-router-dom';
+import { AppContext } from '../components/app-context/Context';
 
 export class MyBank extends Component {
 
@@ -17,6 +18,7 @@ export class MyBank extends Component {
     }
 
     render() {
+        var { onGetCurrentAccountId } = this.context;
         var accData = this.state.accountData;
         if (!accData.length)
             return (
@@ -43,7 +45,7 @@ export class MyBank extends Component {
                             </div>
                             <span> 
                                     <Link tag={Link} className="btn btn-outline-info float-right mr-5" to="/account-details">Детали </Link>
-                                    <button onClick={() => console.log(this.props.onGetCurrentAccountId)}>3232</button>
+                                    <button onClick={()=>onGetCurrentAccountId(data.id)}>3232</button>
                             </span>
                         </div>
                     </div>
@@ -82,13 +84,7 @@ export class MyBank extends Component {
         const data = await response.json();
         this.setState({ accountData: data });
         console.log(this.state.accountData);
-}
-
-
-
-
-    
-
-
+    }
 
 }
+MyBank.contextType = AppContext;
