@@ -7,6 +7,8 @@ export class MyBank extends Component {
 
     constructor(props) {
         super(props);
+        this.getData = this.getData.bind(this);
+        this.createBankAccount = this.createBankAccount.bind(this);
         this.state = {
             accountData: {}
         };
@@ -14,7 +16,7 @@ export class MyBank extends Component {
     }
 
     componentDidMount() {
-        this.populateWeatherData();
+        this.getData();
     }
 
     render() {
@@ -61,24 +63,24 @@ export class MyBank extends Component {
     async createBankAccount()
     {
         const token = await authService.getAccessToken();
-        const response = fetch('api/BankAccounts', {
+        const response = fetch('api/BankAccounts',
+            {
                 method: 'POST',
-            headers: {
+                headers: {
                     'Authorization': `Bearer ${token}`,
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({})
-            })
-            .then(response => response.json())
+            }).then(response => response.json())
             .then(() => {
-                console.log(response)
-                
+                this.getData();
             })
-            .catch(error => console.error('Unable to add item.', error));
+            .catch(error => console.log('Unable to add item.'));
+
     }
 
-    async populateWeatherData() {
+    async getData() {
         const token = await authService.getAccessToken();
         const response = await fetch('api/BankAccounts', {
             headers: !token ? {} : { 'Authorization': `Bearer ${token}` }

@@ -5,6 +5,7 @@ import { Home } from './components/Home';
 import { FetchData } from './components/FetchData';
 import { Counter } from './components/Counter';
 import { MyBank } from './components/MyBank';
+import { Operations } from './components/Operations';
 import AuthorizeRoute from './components/api-authorization/AuthorizeRoute';
 import ApiAuthorizationRoutes from './components/api-authorization/ApiAuthorizationRoutes';
 import { ApplicationPaths } from './components/api-authorization/ApiAuthorizationConstants';
@@ -21,38 +22,52 @@ export default class App extends Component {
         this.onGetCurrentAccountData = this.onGetCurrentAccountData.bind(this);
         this.state = {
             currentAccountId: "",
-            currentAccountData: {}
         };
 
     }
 
-
-    async onGetCurrentAccountData (id) {
-        const token = await authService.getAccessToken();
-        const response = await fetch(`api/BankAccounts/${id}`, {
-            headers: !token ? {} : { 'Authorization': `Bearer ${token}` }
-        });
-        const data = await response.json();
-        this.setState({ currentAccountId: id, currentAccountData: data });
-        console.log(this.state.currentAccountData);
-        console.log(this.state.currentAccountId);
+    onGetCurrentAccountData(id) {
+        console.log(id);
+        this.setState({ currentAccountId: id});
+        
     }
 
-    onGetCurrentAccountName = () => {
-        console.log("lalala");
+    async onCreateNewCard () {
+        const token = await authService.getAccessToken();
+        const response = fetch(`api/BankCards/${this.state.currentAccountId}`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                }).then(response => response.json())
+            .then(() => {
+                
+            })
+            .catch(error => console.log('Unable to add item.'));
     }
 
   render () {
       return (
          
           <Layout>
-              <AppContext.Provider value={{ onGetCurrentAccountData: this.onGetCurrentAccountData, onGetCurrentAccountName: this.onGetCurrentAccountName }}>
+              <AppContext.Provider value={{ onGetCurrentAccountData: this.onGetCurrentAccountData}}>
                 <Route exact path='/' component={Home} /> 
                 <Route path='/counter' component={Counter} />
                 <AuthorizeRoute onGetCurrentAccountId={this.onGetCurrentAccountId} path='/mybank'  component={MyBank} /> 
                 <AuthorizeRoute path='/fetch-data' component={FetchData} />
                 <Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes} />
-                  <Route path='/account-details' component={AccountDetails} onGetCurrentAccountName={this.onGetCurrentAccountName}/>
+
+                <Route path='/operations' render={() => {
+                return <Operations  />
+                }} />
+                <Route path='/account-details' render={() => {
+                      return <AccountDetails currentAccountId={this.state.currentAccountId} />       
+                }} />
+
             </AppContext.Provider>
           </Layout>
         

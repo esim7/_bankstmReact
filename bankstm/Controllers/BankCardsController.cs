@@ -23,24 +23,27 @@ namespace bankstm.Controllers
         }
 
         // GET: api/BankCards
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<BankCard>>> GetBankCards()
-        {
-            return await _context.BankCards.ToListAsync();
-        }
-
-        // GET: api/BankCards/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<BankCard>> GetBankCard(int id)
+        public async Task<ActionResult<IEnumerable<BankCard>>> GetBankCards(int id)
         {
-            var bankCard = await _context.BankCards.FindAsync(id);
-
-            if (bankCard == null)
-            {
-                return NotFound();
-            }
-            return bankCard;
+            var account = await _context.BankAccounts.Include(u=>u.User).FirstOrDefaultAsync(a => a.Id == id);
+            var cards = _context.BankCards.Where(c => c.BankAccount == account);
+            return await cards.ToListAsync();
         }
+
+        //// GET: api/BankCards/5
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<BankCard>> GetBankCard(int id)
+        //{
+        //    var bankCard = await _context.BankCards.FindAsync(id);
+
+        //    if (bankCard == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return bankCard;
+        //}
+
         // PUT: api/BankCards/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutBankCard(int id, BankCard bankCard)
@@ -69,12 +72,15 @@ namespace bankstm.Controllers
         }
 
         // POST: api/BankCards
-        [HttpPost]
-        public async Task<ActionResult<BankCard>> PostBankCard(BankCard bankCard)
+        [HttpPost("{id}")]
+        public async Task<ActionResult<BankCard>> PostBankCard(int id, BankCard bankCard)
         {
-            _context.BankCards.Add(bankCard);
+            var account = await _context.BankAccounts.Include(u=>u.User).FirstOrDefaultAsync(a => a.Id == id);
+            bankCard.BankAccount = account;
+            bankCard.CardHolder = account.User.FirstName + " " + account.User.LastName;
+            var createdCard = _context.BankCards.Add(bankCard);
             await _context.SaveChangesAsync();
-            return CreatedAtAction("GetBankCard", new { id = bankCard.Id }, bankCard);
+            return createdCard.Entity;
         }
 
         // DELETE: api/BankCards/5
