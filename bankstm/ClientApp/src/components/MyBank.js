@@ -18,7 +18,7 @@ export class MyBank extends Component {
     }
 
     render() {
-        var { onGetCurrentAccountId } = this.context;
+        var { onGetCurrentAccountData } = this.context;
         var accData = this.state.accountData;
         if (!accData.length)
             return (
@@ -44,8 +44,10 @@ export class MyBank extends Component {
     
                             </div>
                             <span> 
-                                    <Link tag={Link} className="btn btn-outline-info float-right mr-5" to="/account-details">Детали </Link>
-                                    <button onClick={()=>onGetCurrentAccountId(data.id)}>3232</button>
+                                    <Link tag={Link} onClick={() => onGetCurrentAccountData(data.id)} className="btn btn-outline-info float-right mr-5" to="/account-details">Детали
+                                        
+                                    </Link>
+                                    
                             </span>
                         </div>
                     </div>

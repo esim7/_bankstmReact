@@ -10,19 +10,31 @@ import ApiAuthorizationRoutes from './components/api-authorization/ApiAuthorizat
 import { ApplicationPaths } from './components/api-authorization/ApiAuthorizationConstants';
 import { AccountDetails } from './components/AccountDetails';
 import { AppContext } from './components/app-context/Context';
+import authService from './components/api-authorization/AuthorizeService';
 import './custom.css'
 
 export default class App extends Component {
     static displayName = App.name;
 
-    state = {
-        currentAccountId: "",
-        currentAccountDetails: {},
+    constructor(props) {
+        super(props);
+        this.onGetCurrentAccountData = this.onGetCurrentAccountData.bind(this);
+        this.state = {
+            currentAccountId: "",
+            currentAccountData: {}
+        };
+
     }
 
-    onGetCurrentAccountId = (id) => {
 
-        this.setState({ currentAccountId: id });
+    async onGetCurrentAccountData (id) {
+        const token = await authService.getAccessToken();
+        const response = await fetch(`api/BankAccounts/${id}`, {
+            headers: !token ? {} : { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+        this.setState({ currentAccountId: id, currentAccountData: data });
+        console.log(this.state.currentAccountData);
         console.log(this.state.currentAccountId);
     }
 
@@ -34,13 +46,13 @@ export default class App extends Component {
       return (
          
           <Layout>
-              <AppContext.Provider value={{ onGetCurrentAccountId: this.onGetCurrentAccountId, onGetCurrentAccountName: this.onGetCurrentAccountName }}>
+              <AppContext.Provider value={{ onGetCurrentAccountData: this.onGetCurrentAccountData, onGetCurrentAccountName: this.onGetCurrentAccountName }}>
                 <Route exact path='/' component={Home} /> 
                 <Route path='/counter' component={Counter} />
                 <AuthorizeRoute onGetCurrentAccountId={this.onGetCurrentAccountId} path='/mybank'  component={MyBank} /> 
                 <AuthorizeRoute path='/fetch-data' component={FetchData} />
                 <Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes} />
-                <Route path='/account-details' component={AccountDetails} />
+                  <Route path='/account-details' component={AccountDetails} onGetCurrentAccountName={this.onGetCurrentAccountName}/>
             </AppContext.Provider>
           </Layout>
         

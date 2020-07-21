@@ -49,7 +49,7 @@ namespace bankstm.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<BankAccount>> GetBankAccount(int id)
         {
-            var bankAccount = await _context.BankAccounts.FindAsync(id);
+            var bankAccount = await _context.BankAccounts.Include(c=>c.BankCards).FirstOrDefaultAsync(x=>x.Id == id);
 
             if (bankAccount == null)
             {
