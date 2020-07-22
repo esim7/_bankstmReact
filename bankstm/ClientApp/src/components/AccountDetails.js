@@ -51,14 +51,14 @@ export class AccountDetails extends Component {
         var cards = this.state.accountCards;
         if (!cards.length) {
             return (
-                <div>
+                <div className="mt-5">
                     <h4>Данный банковский счет не содержит активных карт</h4>
                     <button type="button" class="btn btn-warning" onClick={this.createBankCard}>Заявка на открытие карточки</button>
                 </div>
             )
         }
         return (
-            <div class="col-sm-5 d-block mx-auto ">
+            <div class="col-sm-3 d-block mx-auto ">
             <button type="button" class="btn btn-warning" onClick={this.createBankCard}>Заявка на открытие новой карточки</button>
                 {cards.map(data =>
                     <div class="card text-white mb-4 border border-white">
@@ -68,7 +68,7 @@ export class AccountDetails extends Component {
                         </div>
                         <div className="card-footer text-dark">
                             <p>Держатель: {data.cardHolder} </p>
-                            <p>Остаток: {data.amount}</p>
+                            <p>Остаток: {data.amount} тенге</p>
                         </div>
                     </div>
             )}

@@ -5,6 +5,7 @@ export class GlobalTransfer extends Component {
 
     constructor() {
         super();
+        this.toTransfer = this.toTransfer.bind(this);
         this.state = {
             currentCards: {},
             allCards: {},
@@ -33,7 +34,6 @@ export class GlobalTransfer extends Component {
         });
         const data = await response.json();
         console.log(data);
-        //var { bankCards } = data[0];
         this.setState({ allCards: data });
     }
 
@@ -45,40 +45,43 @@ export class GlobalTransfer extends Component {
         var idTo = selectTo.options[selectTo.selectedIndex].value;
         var sum = document.querySelector('#transfer-sum').value;
 
+        var senderCard = this.state.currentCards.find(x => x.id == idFrom);
 
-        console.log(idFrom);
-        console.log(idTo);
-        console.log(sum);
 
-        //if (idFrom == idTo) {
-        //    alert('Выбранная операция не корректна');
-        //    return;
-        //}
-        //else {
-        //    var myselfCardTransfer = new Object();
-        //    myselfCardTransfer.CardIdFrom = idFrom;
-        //    myselfCardTransfer.CardIdTo = idTo;
-        //    myselfCardTransfer.Sum = sum;
+        if (idFrom == idTo) {
+            alert('Выбранная операция не корректна');
+            return;
+        }
+        if (senderCard.amount < sum) {
+            alert('Недостаточно средств на счету для перевода');
+            return;
+        }
 
-        //    const token = await authService.getAccessToken();
-        //    const response = fetch('api/BankCards',
-        //            {
-        //                method: 'PUT',
-        //                headers: {
-        //                    'Authorization': `Bearer ${token}`,
-        //                    'Accept': 'application/json',
-        //                    'Content-Type': 'application/json'
-        //                },
-        //                body: JSON.stringify(myselfCardTransfer)
-        //            }).then(response => response.json())
-        //        .then(() => {
-        //            alert('Перевод отправлен успешно');
-        //            selectFrom.options[selectFrom.selectedIndex].text = '';
-        //            selectTo.options[selectTo.selectedIndex].text = '';
-        //            document.querySelector('#transfer-sum').value = '';
-        //        })
-        //        .catch(error => console.error('Unable to update.', error));
-        //}
+        else {
+            var myselfCardTransfer = new Object();
+            myselfCardTransfer.CardIdFrom = idFrom;
+            myselfCardTransfer.CardIdTo = idTo;
+            myselfCardTransfer.Sum = sum;
+
+            const token = await authService.getAccessToken();
+            const response = fetch('api/BankCards',
+                    {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(myselfCardTransfer)
+                    }).then(response => response.json())
+                .then(() => {
+                    alert('Перевод отправлен успешно');
+                    selectFrom.options[selectFrom.selectedIndex].text = '';
+                    selectTo.options[selectTo.selectedIndex].text = '';
+                    document.querySelector('#transfer-sum').value = '';
+                })
+                .catch(error => console.error('Unable to update.', error));
+        }
     }
 
 
