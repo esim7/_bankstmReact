@@ -6,6 +6,7 @@ import { FetchData } from './components/FetchData';
 import { Counter } from './components/Counter';
 import { MyBank } from './components/MyBank';
 import { Operations } from './components/Operations';
+import { Addition } from './components/Addition';
 import AuthorizeRoute from './components/api-authorization/AuthorizeRoute';
 import ApiAuthorizationRoutes from './components/api-authorization/ApiAuthorizationRoutes';
 import { ApplicationPaths } from './components/api-authorization/ApiAuthorizationConstants';
@@ -63,6 +64,9 @@ export default class App extends Component {
 
                 <Route path='/operations' render={() => {
                 return <Operations  />
+                }} />
+                  <Route path='/addition' render={() => {
+                    return <Addition />
                 }} />
                 <Route path='/account-details' render={() => {
                       return <AccountDetails currentAccountId={this.state.currentAccountId} />       

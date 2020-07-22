@@ -52,7 +52,9 @@ namespace bankstm.Controllers
             {
                 return BadRequest();
             }
-            _context.Entry(bankCard).State = EntityState.Modified;
+
+            var editableCard = _context.BankCards.Include(b=>b.BankAccount).First(c => c.Id == id);
+            editableCard.Amount += bankCard.Amount;
             try
             {
                 await _context.SaveChangesAsync();
@@ -68,7 +70,7 @@ namespace bankstm.Controllers
                     throw;
                 }
             }
-            return NoContent();
+            return Ok(editableCard);
         }
 
         // POST: api/BankCards
