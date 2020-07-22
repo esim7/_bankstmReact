@@ -51,7 +51,7 @@ export class Addition extends Component {
                 select.options[select.selectedIndex].text = '';
                 document.querySelector('#adding-sum').value = '';
             })
-            .catch(error => console.error('Unable to update item.', error));
+            .catch(error => console.error('Unable to update.', error));
     }
 
     render() {

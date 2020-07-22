@@ -7,6 +7,8 @@ import { Counter } from './components/Counter';
 import { MyBank } from './components/MyBank';
 import { Operations } from './components/Operations';
 import { Addition } from './components/Addition';
+import { MyselfTransfer } from './components/MyselfTransfer';
+import { GlobalTransfer } from './components/GlobalTransfer';
 import AuthorizeRoute from './components/api-authorization/AuthorizeRoute';
 import ApiAuthorizationRoutes from './components/api-authorization/ApiAuthorizationRoutes';
 import { ApplicationPaths } from './components/api-authorization/ApiAuthorizationConstants';
@@ -53,7 +55,7 @@ export default class App extends Component {
 
   render () {
       return (
-         
+          
           <Layout>
               <AppContext.Provider value={{ onGetCurrentAccountData: this.onGetCurrentAccountData}}>
                 <Route exact path='/' component={Home} /> 
@@ -65,8 +67,14 @@ export default class App extends Component {
                 <Route path='/operations' render={() => {
                 return <Operations  />
                 }} />
-                  <Route path='/addition' render={() => {
+                <Route path='/addition' render={() => {
                     return <Addition />
+                }} />
+                <Route path='/global-transfer' render={() => {
+                    return <GlobalTransfer />
+                }} />
+                <Route path='/myself-transfer' render={() => {
+                    return <MyselfTransfer />
                 }} />
                 <Route path='/account-details' render={() => {
                       return <AccountDetails currentAccountId={this.state.currentAccountId} />       

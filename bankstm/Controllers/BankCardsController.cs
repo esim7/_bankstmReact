@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using bankstm.Data;
 using bankstm.Models;
+using bankstm.Models.customModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,18 +32,18 @@ namespace bankstm.Controllers
             return await cards.ToListAsync();
         }
 
-        //// GET: api/BankCards/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<BankCard>> GetBankCard(int id)
-        //{
-        //    var bankCard = await _context.BankCards.FindAsync(id);
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<BankCard>>> GetBankCard()
+        {
+            var userId = HttpContext.User.Claims.ElementAt(5).Value;
+            var allCards = await _context.BankCards.Include(x => x.BankAccount).Where(c => c.BankAccount.User.Id != userId).ToListAsync();
 
-        //    if (bankCard == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return bankCard;
-        //}
+            if (allCards == null)
+            {
+                return NotFound();
+            }
+            return allCards;
+        }
 
         // PUT: api/BankCards/5
         [HttpPut("{id}")]
@@ -72,6 +73,29 @@ namespace bankstm.Controllers
             }
             return Ok(editableCard);
         }
+
+        [HttpPut]
+        public async Task<IActionResult> PutBankCard([FromBody]MyselfCardTransfer myselfCardTransfer)
+        {
+            var fromTransferCard = _context.BankCards.Include(a => a.BankAccount)
+                .First(c => c.Id == myselfCardTransfer.CardIdFrom);
+
+            var toTransferCard = _context.BankCards.Include(a => a.BankAccount)
+                .First(c => c.Id == myselfCardTransfer.CardIdTo);
+
+            if (fromTransferCard.Amount < myselfCardTransfer.Sum)
+            {
+                return BadRequest();
+            }
+
+            fromTransferCard.Amount -= myselfCardTransfer.Sum;
+            toTransferCard.Amount += myselfCardTransfer.Sum;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(toTransferCard);
+        }
+
 
         // POST: api/BankCards
         [HttpPost("{id}")]

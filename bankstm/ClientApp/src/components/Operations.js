@@ -9,15 +9,20 @@ export class Operations extends Component {
         return (
             <div class="col-sm-5 d-block mx-auto ">
                 <div className="col-xs-6 mt-5 mb-5"> 
-            <Link tag={Link} className="btn btn-success btn-lg btn-block" to="/addition">
+                    <Link tag={Link} className="btn btn-success btn-lg btn-block" to="/addition">
                     <i className="fas fa-plus mr-3"></i>Пополнить счет
                     </Link>
                 </div>
                 <div className="col-xs-6 mt-5 mb-5">
-                    <button type="button" class="btn btn-warning btn-lg btn-block"><i className="fas fa-random mr-3"></i>Перевод клиенту WorldBank</button>
+                    
+                    <Link tag={Link} className="btn btn-warning btn-lg btn-block" to="/global-transfer">
+                    <i className="fas fa-random mr-3"></i>Перевод клиенту WorldBank
+                    </Link>
                 </div>
-                <div className="col-xs-6 mt-5 mb-5">
-                    <button type="button" class="btn btn-info btn-lg btn-block"><i className="fas fa-exchange-alt mr-3"></i>Перевод между своим карт-счетами</button>
+                <div className="col-xs-6 mt-5 mb-5"> 
+                    <Link tag={Link} className="btn btn-info btn-lg btn-block" to="/myself-transfer">
+                    <i className="fas fa-exchange-alt mr-3"></i>Перевод между своим карт-счетами
+                    </Link>
                 </div>
             </div>
             )
