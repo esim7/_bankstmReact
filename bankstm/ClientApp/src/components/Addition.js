@@ -48,7 +48,7 @@ export class Addition extends Component {
                 }).then(response => response.json())
             .then(() => {
                 alert('Пополнение успешно');
-                select.options[select.selectedIndex].text = '';
+                //select.options[select.selectedIndex].text = '';
                 document.querySelector('#adding-sum').value = '';
             })
             .catch(error => console.error('Unable to update.', error));

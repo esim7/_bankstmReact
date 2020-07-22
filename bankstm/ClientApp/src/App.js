@@ -61,11 +61,10 @@ export default class App extends Component {
                 
                 <AuthorizeRoute onGetCurrentAccountId={this.onGetCurrentAccountId} path='/mybank'  component={MyBank} /> 
                 
-                <Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes} />
+                <Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes} /> 
 
-                <Route path='/operations' render={() => {
-                return <Operations  />
-                }} />
+                <AuthorizeRoute path='/operations' component={Operations} /> 
+
                 <Route path='/addition' render={() => {
                     return <Addition />
                 }} />
