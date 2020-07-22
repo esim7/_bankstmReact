@@ -76,8 +76,8 @@ export class GlobalTransfer extends Component {
                     }).then(response => response.json())
                 .then(() => {
                     alert('Перевод отправлен успешно');
-                    selectFrom.options[selectFrom.selectedIndex].text = '';
-                    selectTo.options[selectTo.selectedIndex].text = '';
+                    //selectFrom.options[selectFrom.selectedIndex].text = '';
+                    //selectTo.options[selectTo.selectedIndex].text = '';
                     document.querySelector('#transfer-sum').value = '';
                 })
                 .catch(error => console.error('Unable to update.', error));

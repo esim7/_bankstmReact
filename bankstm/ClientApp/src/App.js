@@ -2,13 +2,12 @@ import React, { Component } from 'react';
 import { Route } from 'react-router';
 import { Layout } from './components/Layout';
 import { Home } from './components/Home';
-import { FetchData } from './components/FetchData';
-import { Counter } from './components/Counter';
 import { MyBank } from './components/MyBank';
 import { Operations } from './components/Operations';
 import { Addition } from './components/Addition';
 import { MyselfTransfer } from './components/MyselfTransfer';
 import { GlobalTransfer } from './components/GlobalTransfer';
+import { Store } from './components/Store';
 import AuthorizeRoute from './components/api-authorization/AuthorizeRoute';
 import ApiAuthorizationRoutes from './components/api-authorization/ApiAuthorizationRoutes';
 import { ApplicationPaths } from './components/api-authorization/ApiAuthorizationConstants';
@@ -59,9 +58,9 @@ export default class App extends Component {
           <Layout>
               <AppContext.Provider value={{ onGetCurrentAccountData: this.onGetCurrentAccountData}}>
                 <Route exact path='/' component={Home} /> 
-                <Route path='/counter' component={Counter} />
+                
                 <AuthorizeRoute onGetCurrentAccountId={this.onGetCurrentAccountId} path='/mybank'  component={MyBank} /> 
-                <AuthorizeRoute path='/fetch-data' component={FetchData} />
+                
                 <Route path={ApplicationPaths.ApiAuthorizationPrefix} component={ApiAuthorizationRoutes} />
 
                 <Route path='/operations' render={() => {
@@ -77,7 +76,11 @@ export default class App extends Component {
                     return <MyselfTransfer />
                 }} />
                 <Route path='/account-details' render={() => {
-                      return <AccountDetails currentAccountId={this.state.currentAccountId} />       
+                    return <AccountDetails currentAccountId={this.state.currentAccountId} />       
+                }} />
+
+                <Route path='/store' render={() => {
+                    return <Store  />
                 }} />
 
             </AppContext.Provider>

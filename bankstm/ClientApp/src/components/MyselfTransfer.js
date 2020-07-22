@@ -5,6 +5,7 @@ export class MyselfTransfer extends Component {
 
     constructor() {
         super();
+        this.toTransfer = this.toTransfer.bind(this);
         this.state = {
             cards: {},
         };
@@ -34,8 +35,14 @@ export class MyselfTransfer extends Component {
         var idTo = selectTo.options[selectTo.selectedIndex].value;
         var sum = document.querySelector('#transfer-sum').value;
 
-        if (idFrom == idTo) {
+        var senderCard = this.state.cards.find(x => x.id == idFrom);
+
+        if (idFrom == idTo || sum == '') {
             alert('Выбранная операция не корректна');
+            return;
+        }
+        if (senderCard.amount < sum) {
+            alert('Недостаточно средств на счету для перевода');
             return;
         }
         else {
@@ -57,8 +64,8 @@ export class MyselfTransfer extends Component {
                     }).then(response => response.json())
                 .then(() => {
                     alert('Перевод отправлен успешно');
-                    selectFrom.options[selectFrom.selectedIndex].text = '';
-                    selectTo.options[selectTo.selectedIndex].text = '';
+                    //selectFrom.options[selectFrom.selectedIndex].text = '';
+                    //selectTo.options[selectTo.selectedIndex].text = '';
                     document.querySelector('#transfer-sum').value = '';
                 })
                 .catch(error => console.error('Unable to update.', error));
